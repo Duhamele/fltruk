@@ -1,0 +1,4 @@
+fltruk
+*~
+*.orig
+obj/*.o
