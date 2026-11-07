@@ -30,3 +30,5 @@ obj/%.o: %.cc fltruk.hh | GNUmakefile get-short-git.sh
 
 fltruk: $(OBJECTFILES)
 	$(CXX) $(OPTIM) -g $(OBJECTFILES) -o $@ -lfltk
+
+#obj/main-fltruk.o: main-fltruk.cc
