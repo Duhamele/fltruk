@@ -23,7 +23,7 @@ indent:
 # https://stackoverflow.com/a/3220288/841108
 # compile a source file to an object 
 obj/%.o: %.cc fltruk.hh | GNUmakefile get-short-git.sh
-	@printf "€< is %s\n" "$<"
+	@printf "$$< is %s\n" "$<"
 	$(CXX) -UFLTRUK_MAKOBJ $(CXXFLAGS) \
              -DFLTRUK_SHORTGIT=\"$(shell ./get-short-git.sh $^)\" \
              -c $< -o $@
