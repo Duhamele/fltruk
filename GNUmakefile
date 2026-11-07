@@ -6,7 +6,7 @@
 ##                    <basile@starynkevitch.net>
 CXX = g++ #the Gnu C compiler
 OPTIM ?= -Og
-CXXFLAGS += -Wall -Wextra -Weffc++ $(OPTIM) -g
+CXXFLAGS += -Wall -Wextra -Weffc++ $(OPTIM) -g $(shell fltk-config --cxxflags)
 ASTYLE = astyle
 SOURCEFILES:= $(wildcard *.cc)
 OBJECTFILES=$(patsubst %.cc, obj/%.o, $(SOURCEFILES))
@@ -24,11 +24,11 @@ indent:
 # compile a source file to an object 
 obj/%.o: %.cc fltruk.hh | GNUmakefile get-short-git.sh
 	@printf "$$< is %s\n" "$<"
-	$(CXX) -UFLTRUK_MAKOBJ $(CXXFLAGS) \
+	$(CXX) -UFLTRUK_MAKOBJ -DFLTRUK_BASE=\"$(basename $<)\" $(CXXFLAGS) \
              -DFLTRUK_SHORTGIT=\"$(shell ./get-short-git.sh $^)\" \
              -c $< -o $@
 
-fltruk: $(OBJECTFILES)
-	$(CXX) $(OPTIM) -g $(OBJECTFILES) -o $@ -lfltk
+fltruk: $(OBJECTFILES) | GNUmakefile
+	$(CXX) $(OPTIM) -g $(OBJECTFILES)  $(shell fltk-config --libs) -o $@
 
 #obj/main-fltruk.o: main-fltruk.cc

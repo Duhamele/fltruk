@@ -27,8 +27,16 @@
 #error FLTRUK_SHORTGIT should be defined in compilation command
 #endif
 
+#include <cassert>
+#include <dlfcn.h>
+#include <unistd.h>
+#include <time.h>
+#include <cstdlib>
+#include <cstdio>
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
+
+extern "C" void* fltruk_proghdl; // for dlopen
 
 #endif /*FLTRUK_INCLUDED*/

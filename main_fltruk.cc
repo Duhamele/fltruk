@@ -23,7 +23,18 @@
  ***/
 #include "fltruk.hh"
 
+extern "C" const char main_fltruk_git[] = FLTRUK_SHORTGIT;
+extern "C" const char main_fltruk_base[] = FLTRUK_BASE;
+
+void* fltruk_proghdl;
+
 int
 main(int argc, char**argv)
 {
+  fltruk_proghdl = dlopen (NULL, RTLD_NOW);
+  assert (fltruk_proghdl);
+  assert (main_fltruk_base);
+  assert (main_fltruk_git);
+  return 0;
 } // end main
+// end of file main-fltruk.c
