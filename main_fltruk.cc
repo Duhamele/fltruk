@@ -48,9 +48,20 @@ version_fltruk(void)
               << "\t FLTK API: " << Fl::api_version() << std::endl;
 } // end version_fltruk
 
+static int
+arghandle_fltruk(int argc, char**argv, int &i)
+{
+    assert (argc>0);
+    assert(argv);
+    assert(i>=0);
+    asm volatile ("nop");
+    return i;
+} // end arghandle_fltruk
+
 int
 main(int argc, char**argv)
 {
+    int iarg= 0;
     fltruk_prog_argc = argc;
     fltruk_prog_argv = (const char**)argv;
     fltruk_proghdl = dlopen (NULL, RTLD_NOW);
@@ -64,8 +75,10 @@ main(int argc, char**argv)
         } else if (!strcmp(argv[1], "--version")) {
             version_fltruk();
             return 0;
-        }
+        };
     };
+    int r = Fl::args(argc, argv, iarg, arghandle_fltruk);
+    assert(r>=0);
     return 0;
 } // end main
 // end of file main-fltruk.c
