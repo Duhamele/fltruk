@@ -2,4 +2,6 @@ fltruk
 *~
 *.orig
 obj/*.o
+obj/*.so
+generated/_*_.c
 _listfiles_.c

@@ -43,13 +43,13 @@ compile_plugins_fltruk(void)
         return;
     };
     do {
-        const int srclen=80;
+        constexpr int srclen=80;
         char srcpath[sizeof(genpath) + srclen + 4];
         memset(srcpath, 0, sizeof(srcpath));
         char pluginpath[sizeof(srcpath)];
         memset(pluginpath, 0, sizeof(pluginpath));
-	char cmdbuf[sizeof(genpath) + 2*srclen + 4];
-	memset (cmdbuf, 0, sizeof(cmdbuf));
+        char cmdbuf[sizeof(genpath) + 2*srclen + 4];
+        memset (cmdbuf, 0, sizeof(cmdbuf));
         ent = readdir(gendir);
         if (!ent)
             return;
@@ -57,26 +57,70 @@ compile_plugins_fltruk(void)
             continue;
         if (ent->d_name[0] == '.' || ent->d_name[0] == '!')
             continue;
+        bool goodent = isalnum(ent->d_name[0]) || ent->d_name[0] == '_';
+        for  (int i=0; i<ent->d_reclen && goodent; i++)
+            goodent =
+                isalnum(ent->d_name[i])
+                || ent->d_name[i] == '_' || ent->d_name[i] == '.'
+                || ent->d_name[i] == '+' || ent->d_name[i] == '-';
+        if (!goodent) {
+            FLTRUK_WARNING("in %s bad entry %s", genpath, ent->d_name);
+            continue;
+        }
         if (ent->d_reclen < 4 || ent->d_reclen>srclen+sizeof(genpath))
             continue;
         if (ent->d_name[ent->d_reclen-2] != '.'
                 && ent->d_name[ent->d_reclen-1] != 'c')
             continue;
         int slen = snprintf (srcpath, sizeof(srcpath), "%s/%s",
-			     source_directory_fltruk, ent->d_name);
+                             source_directory_fltruk, ent->d_name);
         if (slen<0) {
             FLTRUK_WARNING("snprintf failed for %s in source dir %s",
-			   ent->d_name, source_directory_fltruk);
+                           ent->d_name, source_directory_fltruk);
             continue;
         }
         strcpy (pluginpath, srcpath);
         int pluglen = (int)strlen(pluginpath);
         assert (pluglen>4);
         assert (pluglen<(int)sizeof(pluginpath)-4);
-	assert (pluginpath[pluglen-2] == '.' && pluginpath[pluglen-1] == 'c');
-	pluginpath[pluglen-1] = 's';
-	pluginpath[pluglen] = 'o';
-	pluginpath[pluglen+1] = (char)0;
+        assert (pluginpath[pluglen-2] == '.' && pluginpath[pluglen-1] == 'c');
+        pluginpath[pluglen-1] = 's';
+        pluginpath[pluglen] = 'o';
+        pluginpath[pluglen+1] = (char)0;
+        if (2*slen + 32 > (int) sizeof(cmdbuf))
+            FLTRUK_WARNING("probably too long source %s and plugin %s files",
+                           srcpath, pluginpath);
+        struct stat srcstat = {};
+        struct stat pluginstat = {};
+        assert (0 == *(char*)&srcstat);
+        assert (0 == *(char*)&pluginstat);
+        if (stat (srcpath, &srcstat)) {
+            FLTRUK_WARNING("failed to stat source file %s (%s)", srcpath, strerror(errno));
+            continue;
+        };
+        assert (srcstat.st_uid > 0);
+        if (stat (pluginpath, &pluginstat)
+                || pluginstat.st_mtime <= srcstat.st_mtime) {
+            const char *lastslplug = strrchr(pluginpath, '/');
+            if (lastslplug)
+                lastslplug++;
+            else
+                lastslplug = pluginpath;
+            int cmdlen = snprintf (cmdbuf, sizeof(cmdbuf)-1,
+                                   "%s -C %s generated/%s",
+                                   make_fltruk, source_directory_fltruk, lastslplug);
+            if (cmdlen<0) {
+                FLTRUK_WARNING("failed to synthesize command to build %s in %s",
+                               pluginpath, source_directory_fltruk);
+                continue;
+            }
+            else {
+                assert(cmdlen>0);
+                int cmdres = system (cmdbuf);
+                if (cmdres != 0)
+                    FLTRUK_WARNING("command %s failed", cmdbuf);
+            }
+        };
     } while (ent);
     closedir(gendir);
 } // end compile_plugins_fltruk
