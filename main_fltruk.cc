@@ -35,8 +35,11 @@ static void
 usage_fltruk(void)
 {
     std::clog << fltruk_prog_argv[0] << " usage:" << std::endl
-              << "\t --help                        # give this help" << std::endl
-              << "\t --version                     # give version" << std::endl;
+              << "\t --help | -h                       # give this help"
+              << std::endl
+              << "\t --version | -V                    # give version"
+              << std::endl;
+    std::clog << "\t# cf github.com/bstarynk/fltruk" << std::endl;
 } // end usage_fltruk
 
 static void
@@ -46,6 +49,8 @@ version_fltruk(void)
               << "\t git " << FLTRUK_SHORTGIT << std::endl
               << "\t FLTK ABI: " << Fl::abi_version() << std::endl
               << "\t FLTK API: " << Fl::api_version() << std::endl;
+    std::clog << "\t\t cf github.com/bstarynk/fltruk"
+              << " & starynkevitch.net/Basile" << std::endl;
 } // end version_fltruk
 
 static int
