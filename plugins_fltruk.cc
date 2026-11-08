@@ -34,6 +34,7 @@ void
 compile_plugins_fltruk(void)
 {
     struct dirent* ent = nullptr;
+    int compilcnt = 0;
     char genpath[384];
     memset (genpath, 0, sizeof(genpath));
     snprintf(genpath, sizeof(genpath)-1, "%s/generated/", source_directory_fltruk);
@@ -43,6 +44,7 @@ compile_plugins_fltruk(void)
         return;
     };
     do {
+        int entlen = 0;
         constexpr int srclen=80;
         char srcpath[sizeof(genpath) + srclen + 4];
         memset(srcpath, 0, sizeof(srcpath));
@@ -55,10 +57,12 @@ compile_plugins_fltruk(void)
             return;
         if (ent->d_type != DT_REG && ent->d_type != DT_LNK)
             continue;
+        entlen = strlen(ent->d_name);
+        assert (entlen < ent->d_reclen && entlen > 0);
         if (ent->d_name[0] == '.' || ent->d_name[0] == '!')
             continue;
         bool goodent = isalnum(ent->d_name[0]) || ent->d_name[0] == '_';
-        for  (int i=0; i<ent->d_reclen && goodent; i++)
+        for  (int i=0; i<entlen && goodent; i++)
             goodent =
                 isalnum(ent->d_name[i])
                 || ent->d_name[i] == '_' || ent->d_name[i] == '.'
@@ -67,10 +71,10 @@ compile_plugins_fltruk(void)
             FLTRUK_WARNING("in %s bad entry %s", genpath, ent->d_name);
             continue;
         }
-        if (ent->d_reclen < 4 || ent->d_reclen>srclen+sizeof(genpath))
+        if (entlen < 4 || entlen>srclen+(int)sizeof(genpath))
             continue;
-        if (ent->d_name[ent->d_reclen-2] != '.'
-                && ent->d_name[ent->d_reclen-1] != 'c')
+        if (ent->d_name[entlen-2] != '.'
+                && ent->d_name[entlen-1] != 'c')
             continue;
         int slen = snprintf (srcpath, sizeof(srcpath), "%s/%s",
                              source_directory_fltruk, ent->d_name);
@@ -83,7 +87,8 @@ compile_plugins_fltruk(void)
         int pluglen = (int)strlen(pluginpath);
         assert (pluglen>4);
         assert (pluglen<(int)sizeof(pluginpath)-4);
-        assert (pluginpath[pluglen-2] == '.' && pluginpath[pluglen-1] == 'c');
+        assert (pluginpath[pluglen-2] == '.'
+                && pluginpath[pluglen-1] == 'c');
         pluginpath[pluglen-1] = 's';
         pluginpath[pluglen] = 'o';
         pluginpath[pluglen+1] = (char)0;
@@ -121,10 +126,13 @@ compile_plugins_fltruk(void)
                 int cmdres = system (cmdbuf);
                 if (cmdres != 0)
                     FLTRUK_WARNING("command %s failed", cmdbuf);
+                compilcnt++;
             }
         };
     } while (ent);
     closedir(gendir);
+    FLTRUK_VERBOSE("compile_plugins_fltruk did %d compilations",
+                   compilcnt);
 } // end compile_plugins_fltruk
 
 
