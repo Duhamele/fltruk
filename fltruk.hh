@@ -57,9 +57,9 @@ extern "C" void warned_at_fltruk(const char*fil, int lin, const char*fun); // fo
 char*buf##FLTRUK_BASE##Lin = nullptr;                           \
 if (asprintf(&buf##FLTRUK_BASE##Lin,Fmt,##__VA_ARGS__)<0)       \
   abort();                                                      \
- assert(buf##FLTRUK_BASE##Lin);					\
- Fl::warning("Fltruk WARNING (%s:%d <%s>) %s",			\
-	     (Fil), (Lin), (Func),				\
+ assert(buf##FLTRUK_BASE##Lin);                                 \
+ Fl::warning("Fltruk WARNING (%s:%d <%s>) %s",                  \
+             (Fil), (Lin), (Func),                              \
              buf##FLTRUK_BASE##Lin);                            \
  warned_at_fltruk(Fil,Lin,Func);                                \
  free(buf##FLTRUK_BASE##Lin);                                   \
@@ -68,22 +68,24 @@ if (asprintf(&buf##FLTRUK_BASE##Lin,Fmt,##__VA_ARGS__)<0)       \
 #define FLTRUK_WARNING_AT(Fil,Lin,Func,Fmt,...) \
   FLTRUK_WARNING_AT2(Fil,Lin,Func,Fmt,##__VA_ARGS__)
 
-#define FLTRUK_WARNING(Fmt,...) FLTRUK_WARNING_AT(__FILE__,__LINE__,__func__,##__VA_ARGS__)
+#define FLTRUK_WARNING(Fmt,...) \
+  FLTRUK_WARNING_AT(__FILE__,__LINE__,__func__,##__VA_ARGS__)
 
 
 
 extern "C" void verbal_at_fltruk(const char*fil, int lin, const char*fun); // for GDB
-#define FLTRUK_VERBOSE_AT2(Fil,Lin,Func,Fmt,...) do {                   \
-  if (verbose_fltruk) {                                                 \
-    char*verbuf##FLTRUK_BASE##Lin = nullptr;                            \
-    if (asprintf(&verbuf##FLTRUK_BASE##Lin,(Fmt),##__VA_ARGS__)<0)      \
-      abort();                                                          \
-    std::clog << "Fltruk° "						\
-	      << (Fil) << ":" << (Lin) << "€ (" << Func << ") "		\
-              << verbuf##FLTRUK_BASE##Lin << std::endl;                 \
- verbal_at_fltruk(Fil,Lin,Func);                                        \
- fflush (nullptr);							\
- free(verbuf##FLTRUK_BASE##Lin);                                        \
+#define FLTRUK_VERBOSE_AT2(Fil,Lin,Func,Fmt,...) do {           \
+  if (verbose_fltruk) {                                         \
+    char*verbuf##FLTRUK_BASE##Lin = nullptr;                    \
+    if (asprintf(&verbuf##FLTRUK_BASE##Lin,                     \
+                 (Fmt), ##__VA_ARGS__)<0)                       \
+      abort();                                                  \
+    std::clog << "Fltruk° "                                     \
+              << (Fil) << ":" << (Lin) << "€ (" << Func << ") " \
+              << verbuf##FLTRUK_BASE##Lin << std::endl;         \
+ verbal_at_fltruk(Fil,Lin,Func);                                \
+ fflush (nullptr);                                              \
+ free(verbuf##FLTRUK_BASE##Lin);                                \
 } } while(0)
 
 #define FLTRUK_VERBOSE_AT(Fil,Lin,Func,Fmt,...) \
