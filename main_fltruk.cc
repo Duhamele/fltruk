@@ -52,10 +52,22 @@ static int
 arghandle_fltruk(int argc, char**argv, int &i)
 {
     assert (argc>0);
-    assert(argv);
-    assert(i>=0);
+    assert (argv);
+    assert (i>=0);
     asm volatile ("nop");
-    return i;
+    if (strcmp("-h", argv[i]) == 0
+            || strcmp("--help", argv[i]) == 0) {
+        usage_fltruk();
+        i++;
+        return 1;
+    }
+    else if (strcmp("-V", argv[i]) == 0
+             || strcmp("--version", argv[i]) == 0) {
+        version_fltruk();
+        i++;
+        return 1;
+    }
+    return 0;
 } // end arghandle_fltruk
 
 int
