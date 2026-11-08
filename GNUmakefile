@@ -4,6 +4,7 @@
 ## Author(s):
 ##      Basile STARYNKEVITCH, 92340 Bourg-la-Reine, France,
 ##                    <basile@starynkevitch.net>
+CC = gcc
 CXX = g++ #the Gnu C compiler
 OPTIM ?= -Og
 CXXFLAGS += -Wall -Wextra -Weffc++ -D_GNU_SOURCE=1 $(OPTIM) -g $(shell fltk-config --cxxflags)
@@ -19,6 +20,14 @@ clean:
 indent:
 	$(ASTYLE) -v $(wildcard [a-z]*.cc [a-z]*.hh)
 
+_listfiles_.c: | GNUmakefile
+	-cp -f $@ $$HOME/tmp/
+	printf "/// generated (in github.com/bstarynk/fltruk) file %s\n" $@ > $@
+	printf "const char* source_files_fltruk[] = {\n" >> $@
+	for f in $(SOURCEFILES) ; do \
+	  printf "  \"%s\",\n" $$f ; \
+	done >> $@
+	printf "  (const char*)0};\n" >> $@
 
 # https://stackoverflow.com/a/3220288/841108
 # compile a source file to an object 
@@ -28,7 +37,12 @@ obj/%.o: %.cc fltruk.hh | GNUmakefile get-short-git.sh
              -DFLTRUK_SHORTGIT=\"$(shell ./get-short-git.sh $^)\" \
              -c $< -o $@
 
-fltruk: $(OBJECTFILES) | GNUmakefile
-	$(CXX) $(OPTIM) -g $(OBJECTFILES)  $(shell fltk-config --ldflags) -o $@
+obj/%.o: %.c | GNUmakefile get-short-git.sh
+	$(CXX) -UFLTRUK_COBJ  -DFLTRUK_BASE=\"$(basename $<)\" -g $(OPTIM) \
+             -DFLTRUK_SHORTGIT=\"$(shell ./get-short-git.sh $^)\" \
+             -c $< -o $@
+
+fltruk: $(OBJECTFILES) obj/_listfiles_.o | GNUmakefile
+	$(CXX) $(OPTIM) -g $(OBJECTFILES) obj/_listfiles_.o $(shell fltk-config --ldflags) -o $@
 
 #obj/main-fltruk.o: main-fltruk.cc

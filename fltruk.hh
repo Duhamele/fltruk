@@ -43,4 +43,6 @@
 extern "C" void* fltruk_proghdl; // for dlopen
 extern "C" int fltruk_prog_arg_cnt(void);
 extern "C" const char*fltruk_fetch_prog_arg(int rk);
+typedef void fltruk_source_file_handler_t (const char*, int, void*);
+extern "C" void fltruk_do_every_source_file(fltruk_source_file_handler_t*p, void*data);
 #endif /*FLTRUK_INCLUDED*/

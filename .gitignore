@@ -2,3 +2,4 @@ fltruk
 *~
 *.orig
 obj/*.o
+_listfiles_.c

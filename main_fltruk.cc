@@ -75,6 +75,18 @@ arghandle_fltruk(int argc, char**argv, int &i)
     return 0;
 } // end arghandle_fltruk
 
+
+
+extern "C" const char*source_files_fltruk[]; // in generated _listfiles_.cc
+void
+fltruk_do_every_source_file (fltruk_source_file_handler_t*p, void*data)
+{
+    if (!p)
+        return;
+    for (int ix=0; source_files_fltruk[ix] != nullptr; ix++)
+        (*p)(source_files_fltruk[ix], ix, data);
+}
+
 int
 main(int argc, char**argv)
 {
@@ -95,7 +107,7 @@ main(int argc, char**argv)
         };
     };
     int r = Fl::args(argc, argv, iarg, arghandle_fltruk);
-    assert(r>=0);
+    assert (r>=0);
     return 0;
 } // end main
 // end of file main-fltruk.c
