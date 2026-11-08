@@ -75,6 +75,15 @@ arghandle_fltruk(int argc, char**argv, int &i)
     return 0;
 } // end arghandle_fltruk
 
+void
+warned_at_fltruk(const char*fil, int lin, const char*fun)
+{
+    assert (fil);
+    assert (lin);
+    assert (fun);
+    asm volatile ("nop; nop; nop; nop");
+} // end warned_at_fltruk
+
 
 
 extern "C" const char*source_files_fltruk[]; // in generated _listfiles_.cc
@@ -87,6 +96,7 @@ fltruk_do_every_source_file (fltruk_source_file_handler_t*p, void*data)
         (*p) (source_files_fltruk[ix], ix, data);
 } // end fltruk_do_every_source_file
 
+extern "C" const char*source_directory_fltruk[]; // in generated _listfiles_.cc
 int
 main(int argc, char**argv)
 {

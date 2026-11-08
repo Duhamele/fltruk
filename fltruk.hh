@@ -27,10 +27,15 @@
 #error FLTRUK_SHORTGIT should be defined in compilation command
 #endif
 
-#include <cassert>
+
 #include <dlfcn.h>
 #include <unistd.h>
 #include <time.h>
+#include <sys/types.h>
+#include <dirent.h>
+
+
+#include <cassert>
 #include <cstdlib>
 #include <cstdio>
 #include <fstream>
@@ -45,4 +50,20 @@ extern "C" int fltruk_prog_arg_cnt(void);
 extern "C" const char*fltruk_fetch_prog_arg(int rk);
 typedef void fltruk_source_file_handler_t (const char*, int, void*);
 extern "C" void fltruk_do_every_source_file(fltruk_source_file_handler_t*p, void*data);
+extern "C" void compile_plugins_fltruk(void);
+extern "C" void warned_at_fltruk(const char*fil, int lin, const char*fun); // for GDB
+#define FLTRUK_WARNING_AT2(Fil,Lin,Func,Fmt,...) do {		\
+char*buf##FLTRUK_BASE##Lin = nullptr;				\
+if (asprintf(&buf##FLTRUK_BASE##Lin,Fmt,##__VA_ARGS__)<0)	\
+  abort();							\
+ Fl::warning("WARNING (%s:%d <%s>) %s", (Fil), (Lin), (Func),	\
+	     buf##FLTRUK_BASE##Lin);				\
+ warned_at_fltruk(Fil,Lin,Func);                                \
+ free(buf##FLTRUK_BASE##Lin);					\
+} while(0)
+
+#define FLTRUK_WARNING_AT(Fil,Lin,Func,Fmt,...) \
+  FLTRUK_WARNING_AT2(Fil,Lin,Func,Fmt,##__VA_ARGS__)
+
+#define FLTRUK_WARNING(Fmt,...) FLTRUK_WARNING_AT(__FILE__,__LINE__,__func__,##__VA_ARGS__)
 #endif /*FLTRUK_INCLUDED*/
