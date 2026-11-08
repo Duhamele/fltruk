@@ -84,8 +84,8 @@ fltruk_do_every_source_file (fltruk_source_file_handler_t*p, void*data)
     if (!p)
         return;
     for (int ix=0; source_files_fltruk[ix] != nullptr; ix++)
-        (*p)(source_files_fltruk[ix], ix, data);
-}
+        (*p) (source_files_fltruk[ix], ix, data);
+} // end fltruk_do_every_source_file
 
 int
 main(int argc, char**argv)
