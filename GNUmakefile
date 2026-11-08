@@ -6,12 +6,12 @@
 ##                    <basile@starynkevitch.net>
 CXX = g++ #the Gnu C compiler
 OPTIM ?= -Og
-CXXFLAGS += -Wall -Wextra -Weffc++ $(OPTIM) -g $(shell fltk-config --cxxflags)
+CXXFLAGS += -Wall -Wextra -Weffc++ -D_GNU_SOURCE=1 $(OPTIM) -g $(shell fltk-config --cxxflags)
 ASTYLE = astyle
 SOURCEFILES:= $(wildcard *.cc)
 OBJECTFILES=$(patsubst %.cc, obj/%.o, $(SOURCEFILES))
 .PHONY: all clean indent
-all: fltruk
+all: fltruk | GNUmakefile
 
 clean:
 	/bin/rm -vf *~ obj/*.o fltruk _*_.cc *.i *~ *%
@@ -29,6 +29,6 @@ obj/%.o: %.cc fltruk.hh | GNUmakefile get-short-git.sh
              -c $< -o $@
 
 fltruk: $(OBJECTFILES) | GNUmakefile
-	$(CXX) $(OPTIM) -g $(OBJECTFILES)  $(shell fltk-config --libs) -o $@
+	$(CXX) $(OPTIM) -g $(OBJECTFILES)  $(shell fltk-config --ldflags) -o $@
 
 #obj/main-fltruk.o: main-fltruk.cc

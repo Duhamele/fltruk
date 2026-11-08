@@ -33,10 +33,14 @@
 #include <time.h>
 #include <cstdlib>
 #include <cstdio>
+#include <fstream>
+#include <ostream>
+#include <iostream>
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
 
 extern "C" void* fltruk_proghdl; // for dlopen
-
+extern "C" int fltruk_prog_arg_cnt(void);
+extern "C" const char*fltruk_fetch_prog_arg(int rk);
 #endif /*FLTRUK_INCLUDED*/

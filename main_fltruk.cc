@@ -28,13 +28,44 @@ extern "C" const char main_fltruk_base[] = FLTRUK_BASE;
 
 void* fltruk_proghdl;
 
+static int fltruk_prog_argc;
+static const char**fltruk_prog_argv;
+
+static void
+usage_fltruk(void)
+{
+    std::clog << fltruk_prog_argv[0] << " usage:" << std::endl
+              << "\t --help                        # give this help" << std::endl
+              << "\t --version                     # give version" << std::endl;
+} // end usage_fltruk
+
+static void
+version_fltruk(void)
+{
+    std::clog << fltruk_prog_argv[0] << " version:" << std::endl
+              << "\t git " << FLTRUK_SHORTGIT << std::endl
+              << "\t FLTK ABI: " << Fl::abi_version() << std::endl
+              << "\t FLTK API: " << Fl::api_version() << std::endl;
+} // end version_fltruk
+
 int
 main(int argc, char**argv)
 {
+    fltruk_prog_argc = argc;
+    fltruk_prog_argv = (const char**)argv;
     fltruk_proghdl = dlopen (NULL, RTLD_NOW);
     assert (fltruk_proghdl);
     assert (main_fltruk_base);
     assert (main_fltruk_git);
+    if (argc>1) {
+        if (!strcmp(argv[1], "--help")) {
+            usage_fltruk();
+            return 0;
+        } else if (!strcmp(argv[1], "--version")) {
+            version_fltruk();
+            return 0;
+        }
+    };
     return 0;
 } // end main
 // end of file main-fltruk.c
