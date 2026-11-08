@@ -105,7 +105,7 @@ verbal_at_fltruk(const char*fil, int lin, const char*fun)
     assert (lin);
     assert (fun);
     asm volatile ("nop; nop; nop; nop");
-} // end warned_at_fltruk
+} // end verbal_at_fltruk
 
 
 extern "C" const char*source_files_fltruk[]; // in generated _listfiles_.cc
@@ -140,6 +140,7 @@ main(int argc, char**argv)
     };
     int r = Fl::args(argc, argv, iarg, arghandle_fltruk);
     assert (r>=0);
+    compile_plugins_fltruk();
     return 0;
 } // end main
 // end of file main-fltruk.c
