@@ -53,14 +53,14 @@ extern "C" void fltruk_do_every_source_file(fltruk_source_file_handler_t*p, void
 extern "C" void compile_plugins_fltruk(void);
 extern "C" volatile bool verbose_fltruk;
 extern "C" void warned_at_fltruk(const char*fil, int lin, const char*fun); // for GDB
-#define FLTRUK_WARNING_AT2(Fil,Lin,Func,Fmt,...) do {		\
-char*buf##FLTRUK_BASE##Lin = nullptr;				\
-if (asprintf(&buf##FLTRUK_BASE##Lin,Fmt,##__VA_ARGS__)<0)	\
-  abort();							\
- Fl::warning("WARNING (%s:%d <%s>) %s", (Fil), (Lin), (Func),	\
-	     buf##FLTRUK_BASE##Lin);				\
+#define FLTRUK_WARNING_AT2(Fil,Lin,Func,Fmt,...) do {           \
+char*buf##FLTRUK_BASE##Lin = nullptr;                           \
+if (asprintf(&buf##FLTRUK_BASE##Lin,Fmt,##__VA_ARGS__)<0)       \
+  abort();                                                      \
+ Fl::warning("WARNING (%s:%d <%s>) %s", (Fil), (Lin), (Func),   \
+             buf##FLTRUK_BASE##Lin);                            \
  warned_at_fltruk(Fil,Lin,Func);                                \
- free(buf##FLTRUK_BASE##Lin);					\
+ free(buf##FLTRUK_BASE##Lin);                                   \
 } while(0)
 
 #define FLTRUK_WARNING_AT(Fil,Lin,Func,Fmt,...) \
@@ -71,15 +71,15 @@ if (asprintf(&buf##FLTRUK_BASE##Lin,Fmt,##__VA_ARGS__)<0)	\
 
 
 extern "C" void verbal_at_fltruk(const char*fil, int lin, const char*fun); // for GDB
-#define FLTRUK_VERBOSE_AT2(Fil,Lin,Func,Fmt,...) do {			\
-  if (verbose_fltruk) {							\
-    char*buf##FLTRUK_BASE##Lin = nullptr;				\
-    if (asprintf(&buf##FLTRUK_BASE##Lin,Fmt,##__VA_ARGS__)<0)		\
-      abort();								\
-    std::clog << (Fil) << ":" << (Lin) << " (" << Func << ") "		\
-	      << buf##FLTRUK_BASE##Lin << std::endl;			\
- verbal_at_fltruk(Fil,Lin,Func);					\
- free(buf##FLTRUK_BASE##Lin);						\
+#define FLTRUK_VERBOSE_AT2(Fil,Lin,Func,Fmt,...) do {                   \
+  if (verbose_fltruk) {                                                 \
+    char*verbuf##FLTRUK_BASE##Lin = nullptr;                            \
+    if (asprintf(&verbuf##FLTRUK_BASE##Lin,(Fmt),##__VA_ARGS__)<0)      \
+      abort();                                                          \
+    std::clog << (Fil) << ":" << (Lin) << " (" << Func << ") "          \
+              << verbuf##FLTRUK_BASE##Lin << std::endl;                 \
+ verbal_at_fltruk(Fil,Lin,Func);                                        \
+ free(verbuf##FLTRUK_BASE##Lin);                                        \
 } } while(0)
 
 #define FLTRUK_VERBOSE_AT(Fil,Lin,Func,Fmt,...) \
