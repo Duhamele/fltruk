@@ -83,8 +83,10 @@ compile_plugins_fltruk(void)
                            ent->d_name, source_directory_fltruk);
             continue;
         }
-        strcpy (pluginpath, srcpath);
-        int pluglen = (int)strlen(pluginpath);
+        int pluglen =
+            snprintf (pluginpath, sizeof(pluginpath)-1,
+                      "%s/obj/%s", source_directory_fltruk,
+                      strrchr(srcpath, '/')+1);
         assert (pluglen>4);
         assert (pluglen<(int)sizeof(pluginpath)-4);
         assert (pluginpath[pluglen-2] == '.'
@@ -95,12 +97,14 @@ compile_plugins_fltruk(void)
         if (2*slen + 32 > (int) sizeof(cmdbuf))
             FLTRUK_WARNING("probably too long source %s and plugin %s files",
                            srcpath, pluginpath);
+        FLTRUK_VERBOSE("plugin source %s shared %s", srcpath, pluginpath);
         struct stat srcstat = {};
         struct stat pluginstat = {};
         assert (0 == *(char*)&srcstat);
         assert (0 == *(char*)&pluginstat);
         if (stat (srcpath, &srcstat)) {
-            FLTRUK_WARNING("failed to stat source file %s (%s)", srcpath, strerror(errno));
+            FLTRUK_WARNING("failed to stat source file %s (%s)",
+                           srcpath, strerror(errno));
             continue;
         };
         assert (srcstat.st_uid > 0);
