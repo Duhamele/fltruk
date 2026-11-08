@@ -27,6 +27,7 @@ extern "C" const char main_fltruk_git[] = FLTRUK_SHORTGIT;
 extern "C" const char main_fltruk_base[] = FLTRUK_BASE;
 
 void* fltruk_proghdl;
+volatile bool verbose_fltruk;
 
 static int fltruk_prog_argc;
 static const char**fltruk_prog_argv;
@@ -38,6 +39,8 @@ usage_fltruk(void)
               << "\t --help | -h                       # give this help"
               << std::endl
               << "\t --version | -V                    # give version"
+              << std::endl
+              << "\t --verbose | -v                    # verbose messages (FLTRUK_VERBAL)"
               << std::endl;
     std::clog << "\t# cf github.com/bstarynk/fltruk" << std::endl;
 } // end usage_fltruk
@@ -72,9 +75,17 @@ arghandle_fltruk(int argc, char**argv, int &i)
         i++;
         return 1;
     }
+    else if (strcmp("-v", argv[i]) == 0
+             || strcmp("--verbose", argv[i]) == 0) {
+        verbose_fltruk = true;
+        i++;
+        return 1;
+    }
     return 0;
 } // end arghandle_fltruk
 
+
+/// GDB can put a breakpoint inside
 void
 warned_at_fltruk(const char*fil, int lin, const char*fun)
 {
@@ -84,6 +95,17 @@ warned_at_fltruk(const char*fil, int lin, const char*fun)
     asm volatile ("nop; nop; nop; nop");
 } // end warned_at_fltruk
 
+
+
+/// GDB can put a breakpoint inside
+void
+verbal_at_fltruk(const char*fil, int lin, const char*fun)
+{
+    assert (fil);
+    assert (lin);
+    assert (fun);
+    asm volatile ("nop; nop; nop; nop");
+} // end warned_at_fltruk
 
 
 extern "C" const char*source_files_fltruk[]; // in generated _listfiles_.cc

@@ -116,6 +116,8 @@ compile_plugins_fltruk(void)
             }
             else {
                 assert(cmdlen>0);
+                fflush (nullptr);
+                FLTRUK_VERBOSE("running command %s", cmdbuf);
                 int cmdres = system (cmdbuf);
                 if (cmdres != 0)
                     FLTRUK_WARNING("command %s failed", cmdbuf);

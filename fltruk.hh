@@ -51,6 +51,7 @@ extern "C" const char*fltruk_fetch_prog_arg(int rk);
 typedef void fltruk_source_file_handler_t (const char*, int, void*);
 extern "C" void fltruk_do_every_source_file(fltruk_source_file_handler_t*p, void*data);
 extern "C" void compile_plugins_fltruk(void);
+extern "C" volatile bool verbose_fltruk;
 extern "C" void warned_at_fltruk(const char*fil, int lin, const char*fun); // for GDB
 #define FLTRUK_WARNING_AT2(Fil,Lin,Func,Fmt,...) do {		\
 char*buf##FLTRUK_BASE##Lin = nullptr;				\
@@ -66,4 +67,24 @@ if (asprintf(&buf##FLTRUK_BASE##Lin,Fmt,##__VA_ARGS__)<0)	\
   FLTRUK_WARNING_AT2(Fil,Lin,Func,Fmt,##__VA_ARGS__)
 
 #define FLTRUK_WARNING(Fmt,...) FLTRUK_WARNING_AT(__FILE__,__LINE__,__func__,##__VA_ARGS__)
+
+
+
+extern "C" void verbal_at_fltruk(const char*fil, int lin, const char*fun); // for GDB
+#define FLTRUK_VERBOSE_AT2(Fil,Lin,Func,Fmt,...) do {			\
+  if (verbose_fltruk) {							\
+    char*buf##FLTRUK_BASE##Lin = nullptr;				\
+    if (asprintf(&buf##FLTRUK_BASE##Lin,Fmt,##__VA_ARGS__)<0)		\
+      abort();								\
+    std::clog << (Fil) << ":" << (Lin) << " (" << Func << ") "		\
+	      << buf##FLTRUK_BASE##Lin << std::endl;			\
+ verbal_at_fltruk(Fil,Lin,Func);					\
+ free(buf##FLTRUK_BASE##Lin);						\
+} } while(0)
+
+#define FLTRUK_VERBOSE_AT(Fil,Lin,Func,Fmt,...) \
+  FLTRUK_VERBOSE_AT2(Fil,Lin,Func,Fmt,##__VA_ARGS__)
+
+#define FLTRUK_VERBOSE(Fmt,...) \
+  FLTRUK_VERBOSE_AT(__FILE__,__LINE__,__func__,Fmt,##__VA_ARGS__)
 #endif /*FLTRUK_INCLUDED*/
