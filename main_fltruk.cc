@@ -118,6 +118,31 @@ fltruk_do_every_source_file (fltruk_source_file_handler_t*p, void*data)
         (*p) (source_files_fltruk[ix], ix, data);
 } // end fltruk_do_every_source_file
 
+
+const char*
+fltruk_program_name(void)
+{
+    return fltruk_prog_argv[0];
+} // end fltruk_program_name
+
+int
+fltruk_program_arg_count(void)
+{
+    return
+        fltruk_prog_argc;
+} // end fltruk_program_arg_count
+
+const char*
+fltruk_fetch_prog_arg(int rk)
+{
+    if (rk<0)
+        rk += fltruk_prog_argc;
+    if (rk>=0 && rk<fltruk_prog_argc)
+        return fltruk_prog_argv[rk];
+    return nullptr;
+} // end fltruk_fetch_prog_arg
+
+
 extern "C" const char*source_directory_fltruk[]; // in generated _listfiles_.cc
 int
 main(int argc, char**argv)
@@ -140,7 +165,9 @@ main(int argc, char**argv)
     };
     int r = Fl::args(argc, argv, iarg, arghandle_fltruk);
     assert (r>=0);
-    compile_plugins_fltruk();
+    fltruk_compile_plugins ();
     return 0;
 } // end main
+
+
 // end of file main-fltruk.c

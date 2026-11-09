@@ -47,11 +47,17 @@
 
 extern "C" void* fltruk_proghdl; // for dlopen
 extern "C" int fltruk_prog_arg_cnt(void);
+
+extern "C" const char* fltruk_program_name (void);
+extern "C" int fltruk_program_arg_count (void);
 extern "C" const char*fltruk_fetch_prog_arg(int rk);
+
 typedef void fltruk_source_file_handler_t (const char*, int, void*);
 extern "C" void fltruk_do_every_source_file(fltruk_source_file_handler_t*p, void*data);
-extern "C" void compile_plugins_fltruk(void);
+extern "C" void fltruk_compile_plugins(void);
 extern "C" volatile bool verbose_fltruk;
+
+
 extern "C" void warned_at_fltruk(const char*fil, int lin, const char*fun); // for GDB
 #define FLTRUK_WARNING_AT2(Fil,Lin,Func,Fmt,...) do {           \
 char*buf##FLTRUK_BASE##Lin = nullptr;                           \
@@ -93,4 +99,8 @@ extern "C" void verbal_at_fltruk(const char*fil, int lin, const char*fun); // fo
 
 #define FLTRUK_VERBOSE(Fmt,...) \
   FLTRUK_VERBOSE_AT(__FILE__,__LINE__,__func__,Fmt,##__VA_ARGS__)
+
+
+class value_Fltruk {
+};
 #endif /*FLTRUK_INCLUDED*/

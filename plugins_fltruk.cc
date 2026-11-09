@@ -31,13 +31,14 @@ extern "C" const char source_directory_fltruk[];
 extern "C" const char make_fltruk[];
 
 void
-compile_plugins_fltruk(void)
+fltruk_compile_plugins(void)
 {
     struct dirent* ent = nullptr;
     int compilcnt = 0;
     char genpath[384];
     memset (genpath, 0, sizeof(genpath));
-    snprintf(genpath, sizeof(genpath)-1, "%s/generated/", source_directory_fltruk);
+    snprintf(genpath, sizeof(genpath)-1,
+             "%s/generated/", source_directory_fltruk);
     DIR* gendir= opendir(genpath);
     if (!gendir) {
         FLTRUK_WARNING("fail to opendir %s", genpath);
@@ -97,7 +98,8 @@ compile_plugins_fltruk(void)
         if (2*slen + 32 > (int) sizeof(cmdbuf))
             FLTRUK_WARNING("probably too long source %s and plugin %s files",
                            srcpath, pluginpath);
-        FLTRUK_VERBOSE("plugin source %s shared %s", srcpath, pluginpath);
+        FLTRUK_VERBOSE("plugin source %s shared %s",
+                       srcpath, pluginpath);
         struct stat srcstat = {};
         struct stat pluginstat = {};
         assert (0 == *(char*)&srcstat);
@@ -126,7 +128,9 @@ compile_plugins_fltruk(void)
             else {
                 assert(cmdlen>0);
                 fflush (nullptr);
-                FLTRUK_VERBOSE("running command %s", cmdbuf);
+                FLTRUK_VERBOSE("%s running command %s",
+                               fltruk_program_name(),
+                               cmdbuf);
                 int cmdres = system (cmdbuf);
                 if (cmdres != 0)
                     FLTRUK_WARNING("command %s failed", cmdbuf);

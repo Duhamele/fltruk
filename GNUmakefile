@@ -46,7 +46,7 @@ obj/%.o: %.c | GNUmakefile get-short-git.sh
              -DFLTRUK_SHORTGIT=\"$(shell ./get-short-git.sh $^)\" \
              -c $< -o $@
 
-obj/%.so: generated/%.c | GNUmakefile get-short-git.sh
+obj/%.so: generated/%.c fltruk.hh | GNUmakefile get-short-git.sh
 	$(CCACHE) $(CC) -UFLTRUK_GENPLUGIN  -DFLTRUK_BASE=\"$(basename $<)\" -g $(OPTIM) \
              -DFLTRUK_SHORTGIT=\"$(shell ./get-short-git.sh $^)\" \
              -c $< -fPIC -shared -o $@
