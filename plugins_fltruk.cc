@@ -77,8 +77,9 @@ fltruk_compile_plugins(void)
         if (ent->d_name[entlen-2] != '.'
                 && ent->d_name[entlen-1] != 'c')
             continue;
-        int slen = snprintf (srcpath, sizeof(srcpath), "%s/%s",
+        int slen = snprintf (srcpath, sizeof(srcpath), "%s/generated/%s",
                              source_directory_fltruk, ent->d_name);
+        FLTRUK_VERBOSE("plugin srcpath %s (ent %s)", srcpath, ent->d_name);
         if (slen<0) {
             FLTRUK_WARNING("snprintf failed for %s in source dir %s",
                            ent->d_name, source_directory_fltruk);
@@ -98,7 +99,7 @@ fltruk_compile_plugins(void)
         if (2*slen + 32 > (int) sizeof(cmdbuf))
             FLTRUK_WARNING("probably too long source %s and plugin %s files",
                            srcpath, pluginpath);
-        FLTRUK_VERBOSE("plugin source %s shared %s",
+        FLTRUK_VERBOSE("plugin srcpath= %s  pluginpath= %s",
                        srcpath, pluginpath);
         struct stat srcstat = {};
         struct stat pluginstat = {};
@@ -118,7 +119,7 @@ fltruk_compile_plugins(void)
             else
                 lastslplug = pluginpath;
             int cmdlen = snprintf (cmdbuf, sizeof(cmdbuf)-1,
-                                   "%s -C %s generated/%s",
+                                   "%s -C %s obj/%s",
                                    make_fltruk, source_directory_fltruk, lastslplug);
             if (cmdlen<0) {
                 FLTRUK_WARNING("failed to synthesize command to build %s in %s",
