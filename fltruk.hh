@@ -81,7 +81,7 @@ extern "C" void verbal_at_fltruk(const char*fil, int lin, const char*fun); // fo
                  (Fmt), ##__VA_ARGS__)<0)                       \
       abort();                                                  \
     std::clog << "Fltruk° "                                     \
-              << (Fil) << ":" << (Lin) << "€ (" << Func << ") " \
+              << (Fil) << ":" << (Lin) << " ∈(" << Func << ") " \
               << verbuf##FLTRUK_BASE##Lin << std::endl;         \
  verbal_at_fltruk(Fil,Lin,Func);                                \
  fflush (nullptr);                                              \
